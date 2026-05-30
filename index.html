@@ -16,7 +16,7 @@
         }
 
         body {
-            background-color: #0b0f19; /* 僅作測試背景用，組件本體是完全透明的 */
+            background-color: transparent; /* 僅作測試背景用，組件本體是完全透明的 */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -92,16 +92,6 @@
             min-width: 0; 
         }
 
-        /* 軸心對稱排版順序控制：6, 4, 2, 1, 3, 5, 7, 8 */
-        .rank-1 { order: 4; }
-        .rank-2 { order: 3; }
-        .rank-3 { order: 5; }
-        .rank-4 { order: 2; }
-        .rank-5 { order: 6; }
-        .rank-6 { order: 1; }
-        .rank-7 { order: 7; }
-        .rank-8 { order: 8; }
-
         /* 頭像外圈流光與動態跳動 */
         .avatar-wrapper {
             position: relative;
@@ -117,16 +107,6 @@
             flex-shrink: 0;
         }
 
-        /* 錯開跳動波形 */
-        .podium-slot:nth-child(1) .avatar-wrapper { animation-delay: 0.2s; }
-        .podium-slot:nth-child(2) .avatar-wrapper { animation-delay: 0.0s; }
-        .podium-slot:nth-child(3) .avatar-wrapper { animation-delay: 0.4s; }
-        .podium-slot:nth-child(4) .avatar-wrapper { animation-delay: 0.6s; }
-        .podium-slot:nth-child(5) .avatar-wrapper { animation-delay: 0.8s; }
-        .podium-slot:nth-child(6) .avatar-wrapper { animation-delay: 1.0s; }
-        .podium-slot:nth-child(7) .avatar-wrapper { animation-delay: 1.2s; }
-        .podium-slot:nth-child(8) .avatar-wrapper { animation-delay: 1.4s; }
-
         /* 第一名頭像點擊控制中心 */
         .rank-1 .avatar-wrapper {
             cursor: pointer;
@@ -140,14 +120,14 @@
             animation: floatAvatar 1.2s ease-in-out infinite;
         }
 
-        /* 皇冠裝飾：置於第一名頭像正中央上方 */
+        /* 皇冠裝飾 */
         .crown {
             position: absolute;
             top: -14px;
             left: 50%;
             transform: translateX(-50%) rotate(-5deg);
             font-size: clamp(12px, 3cqw, 18px);
-            z-index: 5;
+            z-index: 6; /* 確保在數字層上方 */
             display: none;
             pointer-events: none;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
@@ -175,7 +155,29 @@
             background-size: cover;
             background-position: center;
             border: 1.5px solid #0b0f19;
-            z-index: 2;
+            z-index: 2; /* 背景圖層 */
+        }
+
+        /* ✨ 核心修正：圆圈中心数字绝对顶层显化样式 ✨ */
+        .avatar-number {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 4; /* 绝对凌驾于 avatar-img 背景图之上 */
+            font-size: clamp(14px, 3.5cqw, 24px); /* 随容器智能缩放 */
+            font-weight: 900; /* 超粗体，确保极佳清晰度 */
+            color: #ffffff;
+            font-family: "Impact", "Arial Black", sans-serif;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 4px rgba(0, 0, 0, 0.5);
+            pointer-events: none; /* 不干扰点击事件 */
+        }
+        
+        /* 针对第一名的数字进行特殊发光高亮强化 */
+        .rank-1 .avatar-number {
+            color: #ffffff;
+            text-shadow: 0 0 8px #ffcc00, 0 2px 5px rgba(0,0,0,0.9);
         }
 
         /* ==========================================
@@ -197,17 +199,18 @@
             overflow: hidden;
         }
 
-        /* 拔高所有名次的台階佔比 */
-        .rank-1 .step { height: 62cqh; border-top: 3px solid #ffcc00; background: linear-gradient(180deg, rgba(255, 204, 0, 0.12), rgba(17, 24, 39, 0.98)); }
-        .rank-2 .step { height: 53cqh; border-top: 2px solid #00e5ff; }
-        .rank-3 .step { height: 45cqh; border-top: 2px solid #ff7849; }
-        .rank-4 .step { height: 38cqh; border-top: 2px solid #3b82f6; }
-        .rank-5 .step { height: 32cqh; border-top: 2px solid #10b981; }
-        .rank-6 .step { height: 26cqh; border-top: 2px solid #8b5cf6; }
-        .rank-7 .step { height: 21cqh; border-top: 2px solid #6b7280; }
-        .rank-8 .step { height: 16cqh; border-top: 2px solid #4b5563; }
+        /* 各名次的台階邊框頂線顏色 */
+        .rank-1 .step { border-top: 2px solid #ffcc00; }
+        .rank-2 .step { border-top: 2px solid #00e5ff; }
+        .rank-3 .step { border-top: 2px solid #ff7849; }
+        .rank-4 .step { border-top: 2px solid #3b82f6; }
+        .rank-5 .step { border-top: 2px solid #10b981; }
+        .rank-6 .step { border-top: 2px solid #8b5cf6; }
+        .rank-7 .step { border-top: 2px solid #6b7280; }
+        .rank-8 .step { border-top: 2px solid #4b5563; }
+        .podium-slot .step { border-top: 2px solid #4b5563; } 
 
-        /* 排名名稱：完全自動換行，文字不裁切不隱藏 */
+        /* 排名名稱 */
         .player-name {
             font-size: clamp(9px, 1.5cqw, 12px);
             color: #e5e7eb;
@@ -227,7 +230,7 @@
         }
         .rank-1 .player-name { font-weight: 700; color: #ffffff; }
 
-        /* 數據與指標：完全自動換行 */
+        /* 數據與指標 */
         .player-score {
             font-size: clamp(8px, 1.3cqw, 11px);
             color: #9ca3af;
@@ -240,13 +243,16 @@
         }
         .rank-1 .player-score { color: #ffcc00; }
 
-        /* 序號數字：固定釘在各台階最底部 */
+        /* 底部中文名次文字 */
         .step-number {
-            font-size: clamp(12px, 2.5cqw, 18px);
+            font-size: clamp(11px, 2cqw, 15px);
             font-weight: 800;
             margin-top: auto; 
-            line-height: 1;
+            line-height: 1.2;
             padding-top: 6px;
+            width: 100%;
+            text-align: center;
+            display: block;
         }
         .rank-1 .step-number { color: #ffcc00; }
         .rank-2 .step-number { color: #00e5ff; }
@@ -256,9 +262,10 @@
         .rank-6 .step-number { color: #8b5cf6; }
         .rank-7 .step-number { color: #6b7280; }
         .rank-8 .step-number { color: #4b5563; }
+        .podium-slot .step-number { color: #9ca3af; }
 
         /* ==========================================
-           5. 升級版：雙項目修改控制選單面板
+           5. 修改控制選單面板
            ========================================== */
         .edit-panel {
             position: absolute;
@@ -331,7 +338,6 @@
         
         .form-group-row label.label-highlight { color: #ffcc00; }
 
-        /* 雙欄位佈局控制 */
         .input-cols {
             display: flex;
             flex: 1;
@@ -348,8 +354,8 @@
             outline: none;
         }
 
-        .input-name { flex: 2; }  /* 名稱輸入框較寬 */
-        .input-score { flex: 1; } /* 數值輸入框較窄 */
+        .input-name { flex: 2; }  
+        .input-score { flex: 1; } 
 
         .form-group-row input:focus {
             border-color: #00e5ff;
@@ -359,26 +365,37 @@
         .btn-group {
             display: flex;
             gap: 8px;
-            justify-content: flex-end;
+            align-items: center;
             flex-shrink: 0;
             border-top: 1px solid rgba(255,255,255,0.08);
             padding-top: 10px;
         }
 
+        .rank-modifier-controls {
+            display: flex;
+            gap: 6px;
+            margin-right: auto; 
+        }
+
         .btn {
-            padding: 6px 16px;
+            padding: 6px 14px;
             border-radius: 4px;
             font-size: 12px;
             cursor: pointer;
             border: none;
             font-weight: 500;
-            transition: background 0.2s;
+            transition: background 0.2s, opacity 0.2s;
         }
 
         .btn-submit { background: #ffcc00; color: #111827; font-weight: 600; }
         .btn-submit:hover { background: #e6b800; }
         .btn-cancel { background: #374151; color: #9ca3af; }
         .btn-cancel:hover { background: #4b5563; }
+        
+        .btn-add { background: #10b981; color: #fff; font-weight: 600; }
+        .btn-add:hover { background: #059669; }
+        .btn-remove { background: #ef4444; color: #fff; font-weight: 600; }
+        .btn-remove:hover { background: #dc2626; }
 
         /* ==========================================
            6. 動態特效 Animation
@@ -400,105 +417,164 @@
     <div class="leaderboard-card">
         <div class="board-header">产线产效实时綜合排行</div>
         
-        <!-- 全名次階梯容器 -->
         <div class="podium-container" id="podiumContainer">
-            
-            <script>
-                const ranks = [1, 2, 3, 4, 5, 6, 7, 8];
-                let htmlBuffer = '';
-                ranks.forEach(r => {
-                    const isRank1 = (r === 1);
-                    htmlBuffer += `
-                        <div class="podium-slot rank-${r}">
-                            <div class="avatar-wrapper" ${isRank1 ? 'id="avatarTrigger1" title="點擊第一名頭像修改所有排行數據"' : ''}>
-                                ${isRank1 ? '<span class="crown">👑</span>' : ''}
-                                <div class="avatar-glow"></div>
-                                <div class="avatar-img" id="img-${r}"></div>
-                            </div>
-                            <div class="step">
-                                <span class="player-name" id="name-${r}">加載中..</span>
-                                <span class="player-score" id="score-${r}">--</span>
-                                <span class="step-number">${r}</span>
-                            </div>
-                        </div>
-                    `;
-                });
-                document.getElementById('podiumContainer').innerHTML = htmlBuffer;
-            </script>
+            </div>
 
-        </div>
-
-        <!-- 彈出式全域修改控制選單（支援名稱與數字同時調整） -->
         <div class="edit-panel" id="editPanel">
             <div class="edit-panel-header">
                 <div class="edit-panel-title">排行榜數據設定中心</div>
-                <div class="edit-panel-subtitle">點擊第一名頭像觸發，可自訂各名次的名稱與數值指標（含單位）</div>
+                <div class="edit-panel-subtitle">點擊第一名頭像觸發，可自訂名次數量、各線名稱與數值指標（含單位）</div>
             </div>
             
             <div class="form-scroll-area" id="formScrollArea">
-                <!-- 由 JavaScript 動態生成雙欄位輸入框 -->
-            </div>
+                </div>
 
             <div class="btn-group">
+                <div class="rank-modifier-controls">
+                    <button class="btn btn-add" id="btnAddRank" title="增加一個排名欄位">添加名次 (+)</button>
+                    <button class="btn btn-remove" id="btnRemoveRank" title="刪除最後一個名次">刪除名次 (-)</button>
+                </div>
                 <button class="btn btn-cancel" id="btnCancel">取消</button>
                 <button class="btn btn-submit" id="btnSubmit">確認儲存</button>
             </div>
         </div>
     </div>
 
-    <!-- ==========================================
-       7. 核心交互與雙重數據本地保存腳本
-       ========================================== -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // 固定指標預設初始化數據
             const defaultData = {
-                1: { name: "无菌1线", score: "95.8 %", avatar: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%23ffcc00'/><text x='50' y='60' font-size='20' text-anchor='middle' fill='white'>第一名</text></svg>" },
-                2: { name: "矿水2线", score: "92.4 %", avatar: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%2300e5ff'/><text x='50' y='60' font-size='20' text-anchor='middle' fill='white'>第二名</text></svg>" },
-                3: { name: "CAN线", score: "89.1 %", avatar: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%23ff7849'/><text x='50' y='60' font-size='20' text-anchor='middle' fill='white'>第三名</text></svg>" },
-                4: { name: "热充2线", score: "85.5 %", avatar: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%233b82f6'/><text x='50' y='60' font-size='20' text-anchor='middle' fill='white'>第四名</text></svg>" },
-                5: { name: "无菌3线", score: "82.0 %", avatar: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%2310b981'/><text x='50' y='60' font-size='20' text-anchor='middle' fill='white'>第五名</text></svg>" },
-                6: { name: "无菌5线", score: "79.3 %", avatar: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%238b5cf6'/><text x='50' y='60' font-size='20' text-anchor='middle' fill='white'>第六名</text></svg>" },
-                7: { name: "TP1线", score: "75.0 件", avatar: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%236b7280'/><text x='50' y='60' font-size='20' text-anchor='middle' fill='white'>第七名</text></svg>" },
-                8: { name: "矿水2线", score: "71.2 %", avatar: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%234b5563'/><text x='50' y='60' font-size='20' text-anchor='middle' fill='white'>第八名</text></svg>" }
+                1: { label: "第一名", name: "无菌1线", score: "95.8 %", fill: "%23ffcc00" },
+                2: { label: "第二名", name: "矿水2线", score: "92.4 %", fill: "%2300e5ff" },
+                3: { label: "第三名", name: "CAN线", score: "89.1 %", fill: "%23ff7849" },
+                4: { label: "第四名", name: "热充2线", score: "85.5 %", fill: "%233b82f6" },
+                5: { label: "第五名", name: "无菌3线", score: "82.0 %", fill: "%2310b981" },
+                6: { label: "第六名", name: "无菌5线", score: "79.3 %", fill: "%238b5cf6" },
+                7: { label: "第七名", name: "TP1线", score: "75.0 件", fill: "%236b7280" },
+                8: { label: "第八名", name: "矿水2线", score: "71.2 %", fill: "%234b5563" }
             };
 
-            const avatarTrigger1 = document.getElementById('avatarTrigger1');
+            const podiumContainer = document.getElementById('podiumContainer');
             const editPanel = document.getElementById('editPanel');
             const formScrollArea = document.getElementById('formScrollArea');
             const btnCancel = document.getElementById('btnCancel');
             const btnSubmit = document.getElementById('btnSubmit');
+            const btnAddRank = document.getElementById('btnAddRank');
+            const btnRemoveRank = document.getElementById('btnRemoveRank');
+
+            let currentTotalRanks = parseInt(localStorage.getItem('flex_leaderboard_total_count')) || 8;
+            let editingTotalRanks = currentTotalRanks; 
+
+            // 生成數字對應的中文標籤文字
+            function getRankChineseLabel(rank) {
+                if (defaultData[rank]) return defaultData[rank].label;
+                const chineseNums = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", 
+                                     "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十"];
+                return rank <= 20 ? `第${chineseNums[rank]}名` : `第 ${rank} 名`;
+            }
+
+            // 獲取名次對應的圓圈背景色 SVG
+            function getAvatarUrl(rank) {
+                const colorFill = defaultData[rank] ? defaultData[rank].fill : "%234b5563";
+                return `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='${colorFill}'/></svg>`;
+            }
 
             // 讀取快取名稱
             function getRankName(rank) {
                 const savedName = localStorage.getItem(`flex_leaderboard_name_rank_${rank}`);
-                return savedName !== null ? savedName : defaultData[rank].name;
+                if(savedName !== null) return savedName;
+                return defaultData[rank] ? defaultData[rank].name : `待定产线 ${rank}`;
             }
 
             // 讀取快取數值數字
             function getRankScore(rank) {
                 const savedScore = localStorage.getItem(`flex_leaderboard_score_rank_${rank}`);
-                return savedScore !== null ? savedScore : defaultData[rank].score;
+                if(savedScore !== null) return savedScore;
+                return defaultData[rank] ? defaultData[rank].score : `0.0 %`;
             }
 
-            // 渲染看板
+            // 軸心波浪型排版順序生成函數
+            function getCenterSymmetricOrder(total) {
+                let left = [];
+                let right = [];
+                for (let i = 1; i <= total; i++) {
+                    if (i === 1) {
+                        right.push(1);
+                    } else if (i % 2 === 0) {
+                        left.unshift(i);
+                    } else {
+                        right.push(i);
+                    }
+                }
+                return left.concat(right);
+            }
+
+            // 計算台階百分比高度
+            function getStepHeightPercentage(rank, total) {
+                const maxHeight = 62; 
+                const minHeight = 12; 
+                if (total <= 1) return maxHeight;
+                return maxHeight - ((rank - 1) * (maxHeight - minHeight) / (total - 1));
+            }
+
+            // 渲染前端台階看板
             function renderLeaderboard() {
-                for (let r = 1; r <= 8; r++) {
-                    document.getElementById(`name-${r}`).textContent = getRankName(r);
-                    document.getElementById(`score-${r}`).textContent = getRankScore(r);
-                    document.getElementById(`img-${r}`).style.backgroundImage = `url("${defaultData[r].avatar}")`;
+                podiumContainer.innerHTML = '';
+                const orderArray = getCenterSymmetricOrder(currentTotalRanks);
+                
+                let htmlBuffer = '';
+                orderArray.forEach((r, idx) => {
+                    const isRank1 = (r === 1);
+                    const calcHeight = getStepHeightPercentage(r, currentTotalRanks);
+                    const delayTime = (idx * 0.15).toFixed(1);
+
+                    htmlBuffer += `
+                        <div class="podium-slot rank-${r}" style="order: ${idx + 1};">
+                            <div class="avatar-wrapper" ${isRank1 ? 'id="avatarTrigger1" title="點擊第一名頭像修改數據或調整名次數量"' : ''} style="animation-delay: ${delayTime}s;">
+                                ${isRank1 ? '<span class="crown">👑</span>' : ''}
+                                <div class="avatar-glow"></div>
+                                <div class="avatar-img" style="background-image: url('${getAvatarUrl(r)}');"></div>
+                                <div class="avatar-number">${r}</div>
+                            </div>
+                            <div class="step" style="height: ${calcHeight}cqh;">
+                                <span class="player-name">${getRankName(r)}</span>
+                                <span class="player-score">${getRankScore(r)}</span>
+                                <span class="step-number">${getRankChineseLabel(r)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                podiumContainer.innerHTML = htmlBuffer;
+
+                // 重新綁定第一名頭像的點擊事件
+                const trigger = document.getElementById('avatarTrigger1');
+                if (trigger) {
+                    trigger.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        editingTotalRanks = currentTotalRanks; 
+                        buildEditForm();
+                        editPanel.classList.add('active');
+                        
+                        setTimeout(() => {
+                            const firstInput = document.getElementById('input-name-1');
+                            if (firstInput) {
+                                firstInput.focus();
+                                firstInput.select();
+                            }
+                        }, 50);
+                    });
                 }
             }
 
-            // 動態構建表單（包含名稱與數字雙輸入框）
+            // 動態構建表單
             function buildEditForm() {
                 formScrollArea.innerHTML = '';
-                for (let r = 1; r <= 8; r++) {
+                for (let r = 1; r <= editingTotalRanks; r++) {
                     const row = document.createElement('div');
                     row.className = 'form-group-row';
                     const isRank1 = (r === 1);
                     row.innerHTML = `
-                        <label class="${isRank1 ? 'label-highlight' : ''}">${isRank1 ? '第 1 名 👑' : `第 ${r} 名`}</label>
+                        <label class="${isRank1 ? 'label-highlight' : ''}">${getRankChineseLabel(r)} ${isRank1 ? '👑' : ''}</label>
                         <div class="input-cols">
                             <input type="text" class="input-name" id="input-name-${r}" placeholder="請輸入名稱" value="${getRankName(r)}">
                             <input type="text" class="input-score" id="input-score-${r}" placeholder="數值/單位" value="${getRankScore(r)}">
@@ -506,23 +582,32 @@
                     `;
                     formScrollArea.appendChild(row);
                 }
+                formScrollArea.scrollTop = formScrollArea.scrollHeight;
             }
 
-            // 點擊第一名頭像開啟設定中心
-            avatarTrigger1.addEventListener('click', (e) => {
+            // 增加名次栏位 (+)
+            btnAddRank.addEventListener('click', (e) => {
                 e.stopPropagation();
+                if (editingTotalRanks >= 20) {
+                    alert("名次上限最多支持 20 個線位排版！");
+                    return;
+                }
+                editingTotalRanks++;
                 buildEditForm();
-                editPanel.classList.add('active');
-                
-                setTimeout(() => {
-                    const firstInput = document.getElementById('input-name-1');
-                    if (firstInput) {
-                        firstInput.focus();
-                        firstInput.select();
-                    }
-                }, 50);
             });
 
+            // 減少最後一名欄位 (-)
+            btnRemoveRank.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (editingTotalRanks <= 1) {
+                    alert("排行榜最少需要保留 1 個名次台階！");
+                    return;
+                }
+                editingTotalRanks--;
+                buildEditForm();
+            });
+
+            // 取消按鈕
             btnCancel.addEventListener('click', (e) => {
                 e.stopPropagation();
                 editPanel.classList.remove('active');
@@ -531,22 +616,28 @@
             // 儲存所有更動
             btnSubmit.addEventListener('click', (e) => {
                 e.stopPropagation();
-                for (let r = 1; r <= 8; r++) {
+                
+                for (let r = 1; r <= editingTotalRanks; r++) {
                     const nameInput = document.getElementById(`input-name-${r}`);
                     const scoreInput = document.getElementById(`input-score-${r}`);
                     
                     if (nameInput && scoreInput) {
-                        const newName = nameInput.value.trim() || `第 ${r} 名`;
+                        const newName = nameInput.value.trim() || `${getRankChineseLabel(r)}`;
                         const newScore = scoreInput.value.trim() || `--`;
                         
                         localStorage.setItem(`flex_leaderboard_name_rank_${r}`, newName);
                         localStorage.setItem(`flex_leaderboard_score_rank_${r}`, newScore);
                     }
                 }
+                
+                currentTotalRanks = editingTotalRanks;
+                localStorage.setItem('flex_leaderboard_total_count', currentTotalRanks);
+                
                 editPanel.classList.remove('active');
                 renderLeaderboard();
             });
 
+            // 首次加載初始化
             renderLeaderboard();
         });
     </script>
